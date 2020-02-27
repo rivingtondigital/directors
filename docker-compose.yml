@@ -1,0 +1,17 @@
+version: "3"
+services:
+  jupyter: 
+    image: jdco/analytics:latest 
+    user: root
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/home/jovyan/work
+      - ~/.aws/:/home/jovyan/.aws
+    user: jovyan
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/home/jovyan/work/env/yobot-8fe67c7b3a34.json
+      - AWS_SHARED_CREDENTIALS_FILE=/home/jovyan/.aws/credentials
+      - AWS_CONFIG_FILE=/home/jovyan/.aws/config
+      - GRANT_SUDO=yes
+ 
