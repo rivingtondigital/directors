@@ -21,7 +21,6 @@ class TenKParser:
         self.soup = BeautifulSoup(content, 'lxml')
         self.signature_text = None
 
-
     def get_header_styles(self):
         header_style = style_parents[1].get('style')
         sub_style = style_parents[0].get('style')
@@ -43,7 +42,7 @@ class TenKParser:
         return headers
 
     def get_sig_sec(self):
-#         legal = "Pursuant to the requirements of the Securities Exchange Act of 1934"
+        # legal = "Pursuant to the requirements of the Securities Exchange Act of 1934"
         headers = self.get_headers()
         sig_index=None
         for i, header in enumerate(headers):
@@ -65,6 +64,7 @@ class TenKParser:
 
         return index, target
 
+
 def mung(obj):
     txt = obj[0]
     if isinstance(txt, str):
@@ -77,6 +77,7 @@ def mung(obj):
         obj.Name = txt
     return obj
 
+
 def sub_asterix(obj):
     values = obj.values
     ret_values = {}
@@ -86,8 +87,10 @@ def sub_asterix(obj):
     obj = obj.replace(to_replace='*', value=ret_values, inplace=True)
     return obj
 
+
 def extract(table):
     tables = pandas.read_html(str(table), header=0)[1:]
+
     def cleanup(table):
         table = table.dropna(axis=1, how='all')
         table.columns = ['Name', 'Position', 'Date']
@@ -102,6 +105,7 @@ def extract(table):
     one = one.dropna(axis=0, how='any')
     return one.to_json(orient='records')
 
+
 def make_url(key):
     url = s3.generate_presigned_url(
         ClientMethod='get_object',
@@ -111,6 +115,7 @@ def make_url(key):
         }
     )
     return url
+
 
 def process_10K(filename):
     url = "Unknown"
@@ -133,10 +138,10 @@ def process_10K(filename):
         filetype = 'plain/text'
         
     s3.put_object(
-	Bucket=BUCKET,
-	Key=filename,
-	ContentType=filetype,
-	Body=data
+        Bucket=BUCKET,
+        Key=filename,
+        ContentType=filetype,
+        Body=data
     )
 
 

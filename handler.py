@@ -4,29 +4,14 @@ import search_edgar as se
 import extract
 from datetime import datetime
 
-def hello(event, context):
-    client = boto3.client('s3')
-    client.list_objects(Bucket='fylterus-tweets')
-
-    body = {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
-        "input": event
-    }
-
-    response = {
-        "statusCode": 200,
-        "body": json.dumps(body)
-    }
-
-    return response
 
 def batch(event, content):
     try:
         payload = event['Records'][0]['Sns']['Message']
-        print(payload)
+        print("Message from batch: {}".format(payload))
         count = int(payload)
         assert(count >= 1)
-    except:
+    except Exception as e:
         count = 5 
 
     se.marshal(count) 
@@ -44,8 +29,9 @@ def sec_fetch(event, context):
 
     fin = datetime.now()
     dur = fin - now
-    print(name, dur)
+    print("{}: {}".format(name, dur))
     return None
+
 
 def process_ten_k(event, context):
     payload = event['Records'][0]['Sns']['Message']

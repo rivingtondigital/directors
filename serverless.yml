@@ -44,8 +44,6 @@ package:
      - extract.py
 
 functions:
-  hello:
-    handler: handler.hello
 
     events:
       - http:
