@@ -2,16 +2,26 @@ version: "3"
 services:
   jupyter: 
     image: jdco/analytics:latest 
-    user: root
+    container_name: c_jupyter
     ports:
       - "8888:8888"
+      - "8000:8000"
     volumes:
       - .:/home/jovyan/work
       - ~/.aws/:/home/jovyan/.aws
-    user: jovyan
+      - ~/.quandl/:/home/jovyan/.quandl
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/home/jovyan/work/env/yobot-8fe67c7b3a34.json
       - AWS_SHARED_CREDENTIALS_FILE=/home/jovyan/.aws/credentials
       - AWS_CONFIG_FILE=/home/jovyan/.aws/config
-      - GRANT_SUDO=yes
- 
+      - QUANDL_API=/home/jovyan/.quandl/api_key
+
+  db:
+    image: mysql:latest
+    container_name: c_mysql 
+    ports:
+      - "3306"
+    volumes: 
+      - ./data/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes

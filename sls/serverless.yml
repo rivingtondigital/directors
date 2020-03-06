@@ -1,0 +1,75 @@
+
+service: directors
+
+provider:
+  name: aws
+  runtime: python3.6
+  stage: dev
+#  region: us-east-1
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+      Resource:
+        Fn::Join:
+          - ""
+          - - "arn:aws:s3:::"
+            - "Ref" : "ServerlessDeploymentBucket"
+            - "/*"
+    - Effect: "Allow"
+      Action: "s3:*"
+      Resource: "arn:aws:s3:::flip.rdig.co*"
+    - Effect: "Allow"
+      Action: "s3:*"
+      Resource: "arn:aws:s3:::directors.rdig.co*"
+    - Effect: "Allow"
+      Action: "sns:Publish"
+      Resource: "arn:aws:sns:us-east-1:256782092976:GetDirectors"
+
+plugins:
+    - serverless-python-requirements
+
+custom:
+    pythonRequirements:
+          dockerizePip: true
+
+package:
+  include:
+     - search_edgar.py
+     - extract.py
+
+functions:
+
+    events:
+      - http:
+          path: directors/fetch
+          method: get
+
+  sec_fetch:
+    handler: handler.sec_fetch
+    events:
+      - sns: GetDirectors
+
+  batch:
+    handler: handler.batch
+    events:
+      - sns: BatchDocs
+      - schedule: rate(24 hours)
+
+  process_ten_k:
+      handler: handler.process_ten_k
+      events:
+        - sns: ProcessTenK
+
+resources:
+  Resources:
+    NewResource:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: directors.rdig.co 
+
