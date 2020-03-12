@@ -25,4 +25,5 @@ def session_scope():
         session.rollback()
         raise e
     finally:
+        session.expunge_all()
         session.close()

@@ -3,8 +3,7 @@ import pandas as pd
 import requests
 import json
 
-from orm import session_scope
-from orm.models import Company
+from directors.orm.models import Company
 
 
 Listing = namedtuple('Listing', ['name', 'symbol', 'market'])
@@ -40,9 +39,8 @@ class Market:
         return pd.DataFrame(self.listings)
 
     def to_orm(self):
-        with session_scope() as session:
-            for listing in self.listings:
-                session.add(Company(**listing._asdict()))
+        companies = Company.batch_update(self.listings)
+        return companies
 
 
 nyse = Market(
@@ -50,6 +48,7 @@ nyse = Market(
     name_col='Company Name',
     symbol_col='ACT Symbol',
     source='nyse')
+
 
 nasdaq = Market(
     link='https://datahub.io/core/nasdaq-listings/r/nasdaq-listed-symbols.json',
