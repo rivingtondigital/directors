@@ -40,7 +40,10 @@ class Company(Base):
                 sess.query(Company).filter_by(**listing._asdict()).delete()
 
 
-        return new_listings, deleted_listings, unchanged
-
+        return {
+            'new': new_listings,
+            'deleted': deleted_listings,
+            'unchanged': unchanged
+        }
 
 Base.metadata.create_all(engine)

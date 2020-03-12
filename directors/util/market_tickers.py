@@ -30,7 +30,12 @@ class Market:
         data = json.loads(blob)
         for line in data:
             try:
-                ret.append(Listing(line[self.name_col], line[self.symbol_col], self.source))
+                ret.append(
+                    Listing(
+                        line[self.name_col],
+                        line[self.symbol_col],
+                        self.source)
+                )
             except Exception as e:
                 print("Problem encountered with {} on line:\n{}\n{}".format(self.source, line, e))
         return ret
@@ -39,7 +44,7 @@ class Market:
         return pd.DataFrame(self.listings)
 
     def to_orm(self):
-        companies = Company.batch_update(self.listings)
+        companies = Company.batch_update(self.listings, market=self.source)
         return companies
 
 
