@@ -1,4 +1,6 @@
 data/mysql/*
+data/logs/*
 juypter/.*
 __pycache__
 .idea
+.ipynb*

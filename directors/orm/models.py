@@ -48,4 +48,3 @@ class Company(Base):
         }
 
 
-# Base.metadata.create_all(engine)
